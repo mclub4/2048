@@ -2,9 +2,12 @@
 <html>
     <head>
         <title>2048</title>
-        <style></style>
+        <style>
+             @import url('style.css');
+        </style>
     </head>
     <body>
+        <h1>2048</h1>
         <table id="titleBar" border=0>
             <tr>
                 <td id="titlePad">
@@ -15,25 +18,19 @@
                     <p id="score"></p>
             </tr>
         </table>
-        <table id="board" border=0>
-            <tr>
-                <td id="00"></td>
-                <td id="01"></td>
-                <td id="02"></td>
-                <td id="03"></td>
-            </tr>
-            <tr>
-                <td id="10"></td>
-                <td id="11"></td>
-                <td id="12"></td>
-                <td id="13"></td>
-            </tr>
-            <tr>
-                <td id="20"></td>
-                <td id="21"></td>
-                <td id="22"></td>
-                <td id="23"></td>
-            </tr>
-        </table>
+        <fieldset>
+            <legend>게임 설정</legend>
+            <input type = "radio" name="mode" value="normal" checked="true">노멀 모드
+            <input type = "radio" name="mode" value="hard">하드 모드
+            <input type = "radio" name="mode" value="challenge">챌린지 모드
+            <input type = "radio" name="mode" value="custom">커스텀 모드
+            <fieldset >
+                <p id = "description">* 노멀모드<p>기본 모드입니다.
+                </p>
+            </fieldset>
+            <button onclick="game_start()">게임 시작</button>
+        </fieldset>
     </body>
+    <script type="module" src="function.js"></script>
+    <script type=""text/javascript" src="ranking.js"></script>
 </html>
