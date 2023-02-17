@@ -14,3 +14,5 @@ https://yongj.in/development/html-games/
 ● Google, Stack Overflow 사용 불가 </br>
 ● 바닐라 js만 사용 가능 </br>
 ● 서버를 만들 수 없어 최고 기록은 localStorage에만 저장 가능 </br>
+
+#
