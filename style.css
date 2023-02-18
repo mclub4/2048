@@ -6,6 +6,13 @@ h1{
     color:red;
 }
 
-table, td, th {
+table{
+    border : 3px solid black;
+}
+
+.number{
     border : 1px solid black;
-  };
+    width : 150px;
+    height : 150px;
+    text-align: center;
+}

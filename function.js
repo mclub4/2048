@@ -11,41 +11,51 @@ const gameboard = document.createElement('table'); //시각적으로 보여지�
 function gameStart(){
     // 난이도별 가중치 지정정
     weight = parseInt(document.querySelector('input[name="mode"]:checked').value);
-    console.log(weight);
 
     // 게임판 생성
     gameboard_array = Array.from(Array(4), () => new Array(4).fill(0))
-    console.table(gameboard_array);
 
-    for(var i = 0; i<4; i++){
+    for(var i = 0; i<weight; i++){
         const tr = document.createElement('tr');
-        for(var j = 0; j<4; j++){
+        for(var j = 0; j<weight; j++){
             const td = document.createElement('td');
-            td.id = 4*i + j;
+            td.className = "number";
+            td.id = weight*i + j;
             tr.appendChild(td);
         }
         gameboard.appendChild(tr);
     }
-
+    
     document.body.appendChild(gameboard);
     score = 0;
 
     randomXY();
+    randomXY();
+    update();
+    console.table(gameboard_array);
 }
 
-function randomXY(){
-    let rand = parseInt(Math.random()*16);
-    let y = parseInt(rand/4);
-    let x = rand % 4;
-    if(gameboard_array[x][y] == 0) gameboard_array[x][y] = randomNumber();
+//변경사항 게임판에 반영
+function update(){
+    for(var i = 0; i<weight; i++){
+        for(var j = 0; j<weight; j++){
+        //  document.querySelector("[id='" + (i+j*4).toString() + "']").innerHTML = gameboard_array[i][j];
+            console.log([i, j]);
+            console.log("#\\3" + (i+j*4).toString());
+            document.querySelector('#' + CSS.escape(i+j*4)).innerHTML = gameboard_array[i][j]; //id의 첫번째 철자가 숫자면 이스케이프 문자 추가해줘야됨
+        }
+    }
+}
 
+//랜덤 
+function randomXY() {
     while(true){
-        rand = parseInt(Math.random()*16);
-        y = parseInt(rand/4);
-        x = rand % 4;
-        if(gameboard_array[x][y] == 0){
+        let rand = parseInt(Math.random() * (weight*weight));
+        let x = parseInt(rand / weight);
+        let y = rand % weight;
+        if (gameboard_array[x][y] == 0){
             gameboard_array[x][y] = randomNumber();
-            return ;
+            return;
         }
     }
 }
@@ -57,16 +67,17 @@ function randomNumber(){
     else return 2;
 }
 
-// 키보드 입력 처리
+// 키보드 입력 처리 + 방향키 스크롤 방지
 document.addEventListener('keydown', (e) => {
     switch(e.key){
-        case 'ArrowLeft': console.log(e.key); break;
-        case 'ArrowRight': console.log(e.key); break;
-        case 'ArrowUp' : console.log(e.key); break;
-        case 'ArrowDown' : console.log(e.key); break;
+        case 'ArrowLeft': left(); e.preventDefault(); break;
+        case 'ArrowRight': right(); e.preventDefault(); break;
+        case 'ArrowUp' : up(); e.preventDefault(); break;
+        case 'ArrowDown' : down(); e.preventDefault(); break;
     }
 });
 
+// 방향별 이동 처리
 function left(){
     let isMoved ;    
 }
