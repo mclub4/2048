@@ -5,15 +5,19 @@ const hard = 3;
 
 let weight;
 let score;
+let restart = false;
 let gameboard_array; //게임판 좌표의 데이터가 저장되는 2차원 배열
-const gameboard = document.createElement('table'); //시각적으로 보여지는 게임판
+let gameboard; //시각적으로 보여지는 게임판
 
 function gameStart(){
+    if(restart){
+        gameboard.remove();
+    }
+    gameboard = document.createElement('table');
     // 난이도별 가중치 지정정
     weight = parseInt(document.querySelector('input[name="mode"]:checked').value);
-
     // 게임판 생성
-    gameboard_array = Array.from(Array(4), () => new Array(4).fill(0))
+    gameboard_array = Array.from(Array(weight), () => new Array(weight).fill(0))
 
     for(var i = 0; i<weight; i++){
         const tr = document.createElement('tr');
@@ -32,6 +36,7 @@ function gameStart(){
     randomXY();
     randomXY();
     update();
+    restart = true;
     console.table(gameboard_array);
 }
 
@@ -40,12 +45,13 @@ function update(){
     for(var i = 0; i<weight; i++){
         for(var j = 0; j<weight; j++){
         //  document.querySelector("[id='" + (i+j*4).toString() + "']").innerHTML = gameboard_array[i][j];
-            console.log([i, j]);
-            console.log("#\\3" + (i+j*4).toString());
-            document.querySelector('#' + CSS.escape(i+j*4)).innerHTML = gameboard_array[i][j]; //id의 첫번째 철자가 숫자면 이스케이프 문자 추가해줘야됨
+            let box = document.querySelector('#' + CSS.escape(i*weight +j)).innerHTML //id의 첫번째 철자가 숫자면 이스케이프 문자 추가해줘야됨 
+            box.innerHTML = gameboard_array[i][j];
         }
     }
+    document.querySelector('#score').innerHTML = score;
 }
+
 
 //랜덤 
 function randomXY() {
@@ -68,12 +74,36 @@ function randomNumber(){
 }
 
 // 키보드 입력 처리 + 방향키 스크롤 방지
-document.addEventListener('keydown', (e) => {
+window.addEventListener('keydown', (e) => {
     switch(e.key){
         case 'ArrowLeft': left(); e.preventDefault(); break;
         case 'ArrowRight': right(); e.preventDefault(); break;
         case 'ArrowUp' : up(); e.preventDefault(); break;
         case 'ArrowDown' : down(); e.preventDefault(); break;
+    }
+});
+
+// 마우스 입력 처리
+let startPoint;
+
+window.addEventListener('mousedown', (e)=> {
+    startPoint = [e.clientX, e.clientY];
+    console.log("start");
+});
+
+window.addEventListener('mouseup', (e)=> {
+    const endPoint = [e.clientX, e.clientY];
+    console.log("end");
+    const diffX = endPoint[0]-startPoint[0];
+    const diffY = endPoint[1]-startPoint[1];
+    if (diffX < 0 && Math.abs(diffX) > Math.abs(diffY)) {
+        console.log("left");
+    } else if (diffX > 0 && Math.abs(diffX) > Math.abs(diffY)) {
+        console.log("right");
+    } else if (diffY > 0 && Math.abs(diffX) <= Math.abs(diffY)) {
+        console.log("down");
+    } else if (diffY < 0 && Math.abs(diffX) <= Math.abs(diffY)) {
+        console.log("up");
     }
 });
 
