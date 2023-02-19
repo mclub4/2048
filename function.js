@@ -19,7 +19,7 @@ function gameStart(){
     // 난이도별 가중치 지정정
     weight = parseInt(document.querySelector('input[name="mode"]:checked').value);
     // 게임판 생성
-    gameboard_array = Array.from(Array(weight), () => new Array(weight).fill(0))
+    gameboard_array = Array.from(Array(weight), () => new Array(weight).fill(0));
 
     const fragment = document.createDocumentFragment();
     for(var i = 0; i<weight; i++){
@@ -113,14 +113,23 @@ window.addEventListener('mouseup', (e)=> {
             down();
         } else if (diffY < 0 && Math.abs(diffX) <= Math.abs(diffY)) {
             up();
-            console.log("up");
         }
     }
 });
 
 // 방향별 이동 처리
 function left(){
-    let isMoved ;    
+    let isMoved ;
+    let check_array = Array.from(Array(weight), () => new Array(weight).fill(0));
+
+    for(var i = 0; i<weight; i++){
+        for(var j = 0; j<weight; j++){
+            if(gameboard_array != null){
+                const current_array = gameboard_array[i];
+            }
+        }
+    }
+
 }
 
 function right(){
@@ -134,3 +143,8 @@ function up(){
 function down(){
     let isMoved ;    
 }
+
+function gameOver(){
+
+}
+
