@@ -15,4 +15,5 @@ table{
     width : 150px;
     height : 150px;
     text-align: center;
+    user-select: none;
 }
