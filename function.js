@@ -60,7 +60,7 @@ function update(){
 }
 
 
-//랜덤 
+//랜덤 좌표 및 숫자 생성
 function randomXY() {
     while(true){
         let rand = parseInt(Math.random() * (weight*weight));
