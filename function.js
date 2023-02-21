@@ -53,7 +53,6 @@ function update(){
         //  document.querySelector("[id='" + (i+j*4).toString() + "']").innerHTML = gameboard_array[i][j];
             let box = document.querySelector('#' + CSS.escape(i*weight +j)) //id의 첫번째 철자가 숫자면 이스케이프 문자 추가해줘야됨 
             box.innerHTML = gameboard_array[i][j];
-            console.log(box);
         }
     }
     document.querySelector('#score').innerHTML = score;
@@ -86,7 +85,7 @@ window.addEventListener('keydown', (e) => {
         switch(e.key){
             case 'ArrowLeft': left(); e.preventDefault(); break;
             case 'ArrowRight': right(); e.preventDefault(); break;
-            case 'ArrowUp' : up(); e.preventDefault(); break;
+            case 'ArrowUp' : e.preventDefault(); up(); break;
             case 'ArrowDown' : down(); e.preventDefault(); break;
         }
     }
@@ -118,30 +117,111 @@ window.addEventListener('mouseup', (e)=> {
 });
 
 // 방향별 이동 처리
-function left(){
-    let isMoved ;
-    let check_array = Array.from(Array(weight), () => new Array(weight).fill(0));
+let isMoved;
+let isSummed;
 
-    for(var i = 0; i<weight; i++){
+function up(){
+    //let check_array = Array.from(Array(weight), () => new Array(weight).fill(0));
+    //console.time('check');
+    //console.timeEnd('check');
+    isMoved = false;
+    isSummed = false;
+
+    for(var i = 1; i<weight; i++){
         for(var j = 0; j<weight; j++){
-            if(gameboard_array != null){
-                const current_array = gameboard_array[i];
-            }
+            if(gameboard_array[i][j] == 0 || gameboard_array[i][j] == "X") continue;
+                var temp = i-1; //사이에 빈칸이 있는지 체크용 변수
+                while(temp>0 && gameboard_array[temp][j] == 0) temp --;
+                console.log("현재 " + [i,j] + "테스트 중, 체크용 변수는 " + temp + "임");
+                if(gameboard_array[temp][j] == 0){
+                    gameboard_array[temp][j] = gameboard_array[i][j];
+                    gameboard_array[i][j]=0;
+                    isMoved = true;
+                }
+                else if(gameboard_array[temp][j] != gameboard_array[i][j]){
+                    if(temp + 1 == i) continue;
+                    gameboard_array[temp+1][j] = gameboard_array[i][j];
+                    gameboard_array[i][j] = 0;
+                    isMoved = true;
+                }
+                else{
+                    if(gameboard_array[temp][j] > 0){
+                        gameboard_array[temp][j] *= -2;
+                        gameboard_array[i][j] = 0;
+                        score += Math.abs(gameboard_array[temp][j]);
+                        isMoved = true;
+                        isSummed = true;
+                    }
+                    else{
+                        gameboard_array[temp+1][j] = gameboard_array[i][j];
+                        gameboard_array[i][j] = 0;
+                        isMoved = true;
+                    }
+                }
         }
     }
 
+    checkMove();
+}
+
+function down(){
+    for(var i = weight-2; i>0; i--){
+        for(var j = 0; j<weight; j++){
+            if(gameboard_array[i][j] == 0 || gameboard_array[i][j] == "X") continue;
+                var temp = i-1; //사이에 빈칸이 있는지 체크용 변수
+                while(temp>0 && gameboard_array[temp][j] == 0) temp --;
+                console.log("현재 " + [i,j] + "테스트 중, 체크용 변수는 " + temp + "임");
+                if(gameboard_array[temp][j] == 0){
+                    gameboard_array[temp][j] = gameboard_array[i][j];
+                    gameboard_array[i][j]=0;
+                    isMoved = true;
+                }
+                else if(gameboard_array[temp][j] != gameboard_array[i][j]){
+                    if(temp + 1 == i) continue;
+                    gameboard_array[temp+1][j] = gameboard_array[i][j];
+                    gameboard_array[i][j] = 0;
+                    isMoved = true;
+                }
+                else{
+                    if(gameboard_array[temp][j] > 0){
+                        gameboard_array[temp][j] *= -2;
+                        gameboard_array[i][j] = 0;
+                        score += Math.abs(gameboard_array[temp][j]);
+                        isMoved = true;
+                        isSummed = true;
+                    }
+                    else{
+                        gameboard_array[temp+1][j] = gameboard_array[i][j];
+                        gameboard_array[i][j] = 0;
+                        isMoved = true;
+                    }
+                }
+        }
+    }
+
+    checkMove();
+}
+
+function left(){
+    let isMoved ;    
 }
 
 function right(){
     let isMoved ;    
 }
 
-function up(){
-    let isMoved ;    
-}
-
-function down(){
-    let isMoved ;    
+function checkMove(){
+    if(isMoved){
+        if(isSummed){
+            for(var i = 0; i<weight; i++){
+                for(var j = 0; j<weight; j++){
+                    if(gameboard_array[i][j] < 0) gameboard_array[i][j] =  Math.abs(gameboard_array[i][j]);
+                }
+            }
+        }
+        update();
+    }
+    else alert("안움직였네?");
 }
 
 function gameOver(){
