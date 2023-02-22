@@ -1,6 +1,7 @@
 
 let weight;
 let score;
+let time, timer;
 let restart = false;
 let gameover = true;
 let gameboard_array; //게임판 좌표의 데이터가 저장되는 2차원 배열
@@ -11,21 +12,20 @@ function gameStart(){
         gameboard.remove();
     }
     gameboard = document.createElement('table');
+    clearInterval(timer);
 
     // 난이도별 가중치 지정정
     weight = parseInt(document.querySelector('input[name="mode"]:checked').value);
-    console.log(weight);
+
     // 게임판 생성
     gameboard_array = Array.from(Array(weight), () => new Array(weight).fill(0));
 
     const fragment = document.createDocumentFragment();
 
 
-    /*
-    class => 칸을 분류하기 위한 class
-    id => 2048 게임판의 좌표 값
-    data-number => 칸에 담긴 숫자 (CSS에서 색깔 변경용)
-    */
+    // class => 칸을 분류하기 위한 class
+    // id => 2048 게임판의 좌표 값
+    // data-number => 칸에 담긴 숫자 (CSS에서 색깔 변경용)
     for(var i = 0; i<weight; i++){
         const tr = document.createElement('tr');
         for(var j = 0; j<weight; j++){
@@ -55,6 +55,20 @@ function gameStart(){
 
     restart = true;
     gameover = false;
+
+    if(document.querySelector('input[name="mode"]:checked').dataset.mode == "challenge"){
+        time = 5;
+        let displayTime = document.querySelector('#time');
+        displayTime.innerHTML = "남은 시간 : " + time + "초";
+        timer = setInterval(() => {
+            time --;
+            displayTime.innerHTML = "남은 시간 : " + time + "초";
+            if(time == 0){
+                gameOver();
+                clearInterval(timer);
+            }
+        }, 1000);
+    }
     console.table(gameboard_array);
 }
 
@@ -129,15 +143,12 @@ window.addEventListener('mouseup', (e)=> {
 });
 
 // 방향별 이동 처리
-let isMoved;
-let isSummed;
-
 function up(){
     //let check_array = Array.from(Array(weight), () => new Array(weight).fill(0));
     //console.time('check');
     //console.timeEnd('check');
-    isMoved = false;
-    isSummed = false;
+    var isMoved = false;
+    var isSummed = false;
 
     for(var i = 1; i<weight; i++){
         for(var j = 0; j<weight; j++){
@@ -174,12 +185,12 @@ function up(){
         }
     }
 
-    checkMove();
+    checkMove(isMoved, isSummed);
 }
 
 function down(){
-    isMoved = false;
-    isSummed = false;
+    var isMoved = false;
+    var isSummed = false;
 
     for(var i = weight - 2; i>=0; i--){
         for(var j = 0; j<weight; j++){
@@ -214,12 +225,12 @@ function down(){
         }
     }
 
-    checkMove();
+    checkMove(isMoved, isSummed);
 }
 
 function left(){
-    isMoved = false;
-    isSummed = false;
+    var isMoved = false;
+    var isSummed = false;
 
     for(var i = 0; i<weight; i++){
         for(var j = 1; j<weight; j++){
@@ -254,12 +265,12 @@ function left(){
         }
     }
 
-    checkMove();
+    checkMove(isMoved, isSummed);
 }
 
 function right(){
-    isMoved = false;
-    isSummed = false;
+    var isMoved = false;
+    var isSummed = false;
 
     for(var i = 0; i<weight; i++){
         for(var j = weight-2; j>=0; j--){
@@ -294,10 +305,10 @@ function right(){
         }
     }
 
-    checkMove();    
+    checkMove(isMoved, isSummed);    
 }
 
-function checkMove(){
+function checkMove(isMoved, isSummed){
     if(isMoved){
         if(isSummed){
             for(var i = 0; i<weight; i++){
@@ -310,16 +321,13 @@ function checkMove(){
         update();
     }
     else{
-        if(!gameOver()) randomXY();
-        else{
-            alert("게임 오버!");
-            gameover = true;
-        }
+        if(!checkGameOver()) randomXY();
+        else gameOver();
     }
 }
 
 // 게임오버 체크
-function gameOver(){
+function checkGameOver(){
     // 가로로 합쳐질 수 있는지 확인
     for(var i = 0; i<weight; i++){
         var temp = gameboard_array[i][0];
@@ -343,3 +351,23 @@ function gameOver(){
     return true;
 }
 
+function gameOver(){
+    alert("게임 오버!");
+    gameover = true;
+    const max = getMax();
+    time = 0;
+
+}
+
+// 최고 점수 계산
+
+function getMax(){
+    let max = 0;
+    for(var i = 0; i<weight; i++){
+        for(var j = 0; j<weight; j++){
+            if(gameboard_array[i][j] > max) max = gameboard_array;
+        }
+    }
+
+    return max;
+}
