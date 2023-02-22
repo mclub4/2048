@@ -11,13 +11,20 @@ table, tr, td{
     user-select: none;
 }
 
+table{
+    padding : 2px;
+}
+
 .cell{
     border : 2px solid black;
+    border-radius: 6px;
     width : 150px;
     height : 150px;
     font-size : 14pt;
     font-weight: bold;
     text-align: center;
+    margin : 10px;
+    border-collapse: separate;
 }
 
 .cell[data-number="0"]{
@@ -33,4 +40,9 @@ table, tr, td{
 }
 .cell[data-number="8"]{
     background-color: #fac38c;
+}
+.cell[data-number="X"]{
+    border : 10px solid black;
+    background-color: #f71313;
+    color:white;
 }

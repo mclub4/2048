@@ -1,5 +1,5 @@
 
-let weight;
+let weight, level;
 let score;
 let time, timer;
 let restart = false;
@@ -16,6 +16,7 @@ function gameStart(){
 
     // 난이도별 가중치 지정정
     weight = parseInt(document.querySelector('input[name="mode"]:checked').value);
+    level = document.querySelector('input[name="mode"]:checked').dataset.mode;
 
     // 게임판 생성
     gameboard_array = Array.from(Array(weight), () => new Array(weight).fill(0));
@@ -42,21 +43,23 @@ function gameStart(){
     document.body.appendChild(gameboard);
     score = 0;
 
-    if(weight == 5) gameboard_array[2][2] = "X";
+    if(level == "hard") gameboard_array[2][2] = "X";
 
     randomXY();
     randomXY();
-    // gameboard_array =  [[8,4,2,4],
-    //                     [4,16,8,2],
-    //                     [16,2,4,8],
-    //                     [32,64,128,2]]; //test 코드임
+    gameboard_array =  [[8,4,2,4],
+                        [4,16,8,2],
+                        [16,2,4,8],
+                        [32,64,128,2]]; //test 코드임
+    let test = document.getElementById(11).getBoundingClientRect();
+    console.log(test);
 
     update();
 
     restart = true;
     gameover = false;
 
-    if(document.querySelector('input[name="mode"]:checked').dataset.mode == "challenge"){
+    if(level == "challenge"){
         time = 5;
         let displayTime = document.querySelector('#time');
         displayTime.innerHTML = "남은 시간 : " + time + "초";
@@ -69,14 +72,12 @@ function gameStart(){
             }
         }, 1000);
     }
-    console.table(gameboard_array);
 }
 
 // 변경사항 게임판에 반영
 function update(){
     for(var i = 0; i<weight; i++){
         for(var j = 0; j<weight; j++){
-        //  document.querySelector("[id='" + (i+j*4).toString() + "']").innerHTML = gameboard_array[i][j];
             let box = document.querySelector('#' + CSS.escape(i*weight +j)) //id의 첫번째 철자가 숫자면 이스케이프 문자 추가해줘야됨 
             box.innerHTML = gameboard_array[i][j];
             box.dataset.number = gameboard_array[i][j].toString();
@@ -105,24 +106,12 @@ function randomNumber(){
     else return 2;
 }
 
-// 키보드 입력 처리 + 방향키 스크롤 방지
-window.addEventListener('keydown', (e) => {
-    if(restart && !gameover){
-        switch(e.key){
-            case 'ArrowLeft': left(); e.preventDefault(); break;
-            case 'ArrowRight': right(); e.preventDefault(); break;
-            case 'ArrowUp' : e.preventDefault(); up(); break;
-            case 'ArrowDown' :  e.preventDefault(); down(); break;
-        }
-    }
-});
+// 마우스, 키보드 입력 처리
 
-// 마우스 입력 처리
 let startPoint;
 
 window.addEventListener('mousedown', (e)=> {
     startPoint = [e.clientX, e.clientY];
-    // e.preventDefault();
 });
 
 window.addEventListener('mouseup', (e)=> {
@@ -142,7 +131,20 @@ window.addEventListener('mouseup', (e)=> {
     }
 });
 
+window.addEventListener('keydown', (e) => {
+    if(restart && !gameover){
+        switch(e.key){
+            case 'ArrowLeft': left(); e.preventDefault(); break;
+            case 'ArrowRight': right(); e.preventDefault(); break;
+            case 'ArrowUp' : e.preventDefault(); up(); break;
+            case 'ArrowDown' :  e.preventDefault(); down(); break;
+        }
+    }
+});
+
+
 // 방향별 이동 처리
+
 function up(){
     //let check_array = Array.from(Array(weight), () => new Array(weight).fill(0));
     //console.time('check');
@@ -327,6 +329,7 @@ function checkMove(isMoved, isSummed){
 }
 
 // 게임오버 체크
+
 function checkGameOver(){
     // 가로로 합쳐질 수 있는지 확인
     for(var i = 0; i<weight; i++){
@@ -352,10 +355,10 @@ function checkGameOver(){
 }
 
 function gameOver(){
-    alert("게임 오버!");
     gameover = true;
     const max = getMax();
     time = 0;
+    alert("[ 게임 오버 ]\n당신의 점수는 " + score + "이고, 가장 큰 숫자는 " + max + "입니다.");
 
 }
 
@@ -365,9 +368,17 @@ function getMax(){
     let max = 0;
     for(var i = 0; i<weight; i++){
         for(var j = 0; j<weight; j++){
-            if(gameboard_array[i][j] > max) max = gameboard_array;
+            if(gameboard_array[i][j] > max) max = gameboard_array[i][j];
         }
     }
 
     return max;
+}
+
+
+// 애니메이션 주기
+
+function animation(cell){
+    let position = cell.getBoundingClientRect();
+    
 }
