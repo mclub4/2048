@@ -6,14 +6,31 @@ h1{
     color:red;
 }
 
-table{
+table, tr, td{
     border : 3px solid black;
+    user-select: none;
 }
 
-.number{
-    border : 1px solid black;
+.cell{
+    border : 2px solid black;
     width : 150px;
     height : 150px;
+    font-size : 14pt;
+    font-weight: bold;
     text-align: center;
-    user-select: none;
+}
+
+.cell[data-number="0"]{
+    background-color: rgb(242, 248, 212);
+}
+
+.cell[data-number="2"]{
+    background-color: #f8d1a9;
+}
+
+.cell[data-number="4"]{
+    background-color: #f8d6b4;
+}
+.cell[data-number="8"]{
+    background-color: #fac38c;
 }

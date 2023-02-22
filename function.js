@@ -1,8 +1,4 @@
 
-const normal = 1;
-const challenge = 2; 
-const hard = 3;
-
 let weight;
 let score;
 let restart = false;
@@ -18,16 +14,25 @@ function gameStart(){
 
     // 난이도별 가중치 지정정
     weight = parseInt(document.querySelector('input[name="mode"]:checked').value);
+    console.log(weight);
     // 게임판 생성
     gameboard_array = Array.from(Array(weight), () => new Array(weight).fill(0));
 
     const fragment = document.createDocumentFragment();
+
+
+    /*
+    class => 칸을 분류하기 위한 class
+    id => 2048 게임판의 좌표 값
+    data-number => 칸에 담긴 숫자 (CSS에서 색깔 변경용)
+    */
     for(var i = 0; i<weight; i++){
         const tr = document.createElement('tr');
         for(var j = 0; j<weight; j++){
             const td = document.createElement('td');
-            td.className = "number";
-            td.id = weight*i + j;
+            td.className = "cell";
+            td.id = weight*i + j; 
+            td.dataset.number = "0";
             tr.appendChild(td);
         }
         fragment.appendChild(tr);
@@ -37,9 +42,14 @@ function gameStart(){
     document.body.appendChild(gameboard);
     score = 0;
 
+    if(weight == 5) gameboard_array[2][2] = "X";
+
     randomXY();
     randomXY();
-    // gameboard_array = [[8,4,2,0],[4,0,0,2],[0,2,0,0],[0,0,0,0]]; //test 코드임
+    // gameboard_array =  [[8,4,2,4],
+    //                     [4,16,8,2],
+    //                     [16,2,4,8],
+    //                     [32,64,128,2]]; //test 코드임
 
     update();
 
@@ -48,18 +58,18 @@ function gameStart(){
     console.table(gameboard_array);
 }
 
-//변경사항 게임판에 반영
+// 변경사항 게임판에 반영
 function update(){
     for(var i = 0; i<weight; i++){
         for(var j = 0; j<weight; j++){
         //  document.querySelector("[id='" + (i+j*4).toString() + "']").innerHTML = gameboard_array[i][j];
             let box = document.querySelector('#' + CSS.escape(i*weight +j)) //id의 첫번째 철자가 숫자면 이스케이프 문자 추가해줘야됨 
             box.innerHTML = gameboard_array[i][j];
+            box.dataset.number = gameboard_array[i][j].toString();
         }
     }
     document.querySelector('#score').innerHTML = score;
 }
-
 
 //랜덤 좌표 및 숫자 생성
 function randomXY() {
@@ -134,19 +144,20 @@ function up(){
             if(gameboard_array[i][j] == 0 || gameboard_array[i][j] == "X") continue;
                 var temp = i-1; //사이에 빈칸이 있는지 체크용 변수
                 while(temp>0 && gameboard_array[temp][j] == 0) temp --;
-                // console.log("현재 " + [i,j] + "테스트 중, 체크용 변수는 " + temp + "임");
                 if(gameboard_array[temp][j] == 0){
+                    // 사이에 다 빈칸이면 끝까지 땡김
                     gameboard_array[temp][j] = gameboard_array[i][j];
                     gameboard_array[i][j]=0;
                     isMoved = true;
                 }
                 else if(gameboard_array[temp][j] != gameboard_array[i][j]){
+                    // 다른 숫자에 걸리면 앞에 둠
                     if(temp + 1 == i) continue;
                     gameboard_array[temp+1][j] = gameboard_array[i][j];
                     gameboard_array[i][j] = 0;
-                    isMoved = true;
-                }
+                    isMoved = true;                }
                 else{
+                    // 같은 숫자에 걸리면 합칠 수 있는지 여부 확인
                     if(gameboard_array[temp][j] > 0){
                         gameboard_array[temp][j] *= -2;
                         gameboard_array[i][j] = 0;
@@ -175,7 +186,6 @@ function down(){
             if(gameboard_array[i][j] == 0 || gameboard_array[i][j] == "X") continue;
                 var temp = i+1; //사이에 빈칸이 있는지 체크용 변수
                 while(temp<(weight-1) && gameboard_array[temp][j] == 0) temp ++;
-                // console.log("현재 " + [i,j] + "테스트 중, 체크용 변수는 " + temp + "임");
                 if(gameboard_array[temp][j] == 0){
                     gameboard_array[temp][j] = gameboard_array[i][j];
                     gameboard_array[i][j]=0;
@@ -301,11 +311,35 @@ function checkMove(){
     }
     else{
         if(!gameOver()) randomXY();
+        else{
+            alert("게임 오버!");
+            gameover = true;
+        }
     }
 }
 
+// 게임오버 체크
 function gameOver(){
-    //test
-    return false;
+    // 가로로 합쳐질 수 있는지 확인
+    for(var i = 0; i<weight; i++){
+        var temp = gameboard_array[i][0];
+        if(temp == 0) return false;
+        for(var j = 1; j<weight; j++){
+            if(gameboard_array[i][j] == 0 || gameboard_array[i][j] == temp) return false;
+            else temp = gameboard_array[i][j];
+        }
+    }
+    
+    // 세로로 합쳐질 수 있는지 확인
+    for(var i = 0; i<weight; i++){
+        var temp = gameboard_array[0][i];
+        if(temp == 0) return false;
+        for(var j = 1; j<weight; j++){
+            if(gameboard_array[j][i] == 0 || gameboard_array[j][i] == temp) return false;
+            else temp = gameboard_array[j][i];
+        }
+    }
+
+    return true;
 }
 
