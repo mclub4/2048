@@ -32,7 +32,7 @@ function gameStart(){
         for(var j = 0; j<weight; j++){
             const td = document.createElement('td');
             td.className = "cell";
-            td.id = weight*i + j; 
+            td.id = weight*i + j;
             td.dataset.number = "0";
             tr.appendChild(td);
         }
@@ -47,13 +47,12 @@ function gameStart(){
 
     randomXY();
     randomXY();
-    gameboard_array =  [[8,4,2,4],
-                        [4,16,8,2],
-                        [16,2,4,8],
-                        [32,64,128,2]]; //test 코드임
-    let test = document.getElementById(11).getBoundingClientRect();
-    console.log(test);
 
+    // gameboard_array =  [[8,4,2,4],
+    //                     [4,16,8,2],
+    //                     [16,2,4,8],
+    //                     [32,64,128,2]]; //test 코드임
+ 
     update();
 
     restart = true;
@@ -78,7 +77,7 @@ function gameStart(){
 function update(){
     for(var i = 0; i<weight; i++){
         for(var j = 0; j<weight; j++){
-            let box = document.querySelector('#' + CSS.escape(i*weight +j)) //id의 첫번째 철자가 숫자면 이스케이프 문자 추가해줘야됨 
+            let box = document.getElementById(i*weight +j); //id의 첫번째 철자가 숫자면 이스케이프 문자 추가해줘야됨 
             box.innerHTML = gameboard_array[i][j];
             box.dataset.number = gameboard_array[i][j].toString();
         }
@@ -94,6 +93,7 @@ function randomXY() {
         let y = rand % weight;
         if (gameboard_array[x][y] == 0){
             gameboard_array[x][y] = randomNumber();
+            animation(document.getElementById(x*weight + y), created=true);
             return;
         }
     }
@@ -316,6 +316,7 @@ function checkMove(isMoved, isSummed){
             for(var i = 0; i<weight; i++){
                 for(var j = 0; j<weight; j++){
                     if(gameboard_array[i][j] < 0) gameboard_array[i][j] =  Math.abs(gameboard_array[i][j]);
+                    animation
                 }
             }
         }
@@ -377,8 +378,21 @@ function getMax(){
 
 
 // 애니메이션 주기
-
-function animation(cell){
-    let position = cell.getBoundingClientRect();
-    
+async function animation(cell, created){
+    if (created) {
+        console.log("애니메");
+        cell.animate(
+            {
+                transform: [
+                    'scale(0.5)', // 시작 값
+                    'scale(1)' // 종료 값
+                ]
+            },
+            {
+                duration: 200, // 밀리초 지정
+                fill: 'forwards', // 종료 시 속성을 지님
+                easing: 'ease' // 가속도 종류
+            }
+        );
+    }
 }
