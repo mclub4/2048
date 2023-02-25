@@ -9,28 +9,40 @@
     </head>
     <body>
         <h1>2048</h1>
-        <table id="titleBar" border=0>
+        <table class='scoreBar'>
             <tr>
-                <td id="titlePad">
-                    <p id="title">2048</p>
-                </td>
-                <td id="scorePad">
-                    <p id="scoreType">Score</p>
-                    <p id="score"></p>
+                <td style="width:60px; border:0px">점수</td>
+            </tr>
+            <tr>
+                <td style="width:60px; height:50px; border:0px" id="score"></td>
             </tr>
         </table>
-        <fieldset>
+        <table class='scoreBar' style="margin-left:10px;">
+            <tr>
+                <td style="width:100px; border:0px">최고 기록</td>
+            </tr>
+            <tr>
+                <td style="width:60px; height:50px; border:0px" id="bestScore"></td>
+            </tr>
+        </table>
+        <fieldset style="width:70%;">
             <legend>게임 설정</legend>
-            <input type = "radio" name="mode" data-mode="normal" value="4" checked="true">노멀 모드
-            <input type = "radio" name="mode" data-mode="hard" value="5">하드 모드
-            <input type = "radio" name="mode" data-mode="challenge" value="4">챌린지 모드
+            <div>
+            <input type = "radio" name="mode" data-mode="normal" value="4" checked="true" onchange="description(this)">노멀 모드
+            <input type = "radio" name="mode" data-mode="hard" value="5" onchange="description(this)">하드 모드
+            <input type = "radio" name="mode" data-mode="challenge" value="4" onchange="description(this)">챌린지 모드
             <!-- <input type = "radio" name="mode" data-mode="custom" value="7">커스텀 모드 -->
-            <fieldset >
-                <p id = "description">* 노멀모드<p>기본 모드입니다.
+            </div>
+            <fieldset style="display: inline; width:70%;">
+                <p><span class="description" id = "normal">* 노멀 모드<br>기본 모드입니다.</span>
+                    <span class = "description" id = "hard" style="display:none;">* 하드 모드<br>● 통행을 방해하는 벽이 있습니다<br>● 숫자가 2개씩 나옵니다<br>● 높은 숫자 나올 확률이 높아집니다</span>
+                    <span class = "description" id = "challenge" style="display:none;">* 챌린지 모드<br>● 120초동안 최대한 높은 점수를 얻는 게임입니다</span>
                 </p>
             </fieldset>
-            <button onclick="gameStart()">게임 시작</button>
-            <div id = "time">남은 시간 : </div>
+            <div style="display: inline;">
+                <button id="gamebtn" onclick="gameStart()">게임 시작</button><br>
+                <span style="display: none;" id = "time">남은 시간 : </span>
+            </div>
         </fieldset>
     </body>
     <script type="text/javascript" src="function.js"></script>

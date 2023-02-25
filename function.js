@@ -1,18 +1,29 @@
 
 let weight, level;
 let score;
+let best_score = 0;
 let time, timer;
 let restart = false;
 let gameover = true;
 let gameboard_array; //게임판 좌표의 데이터가 저장되는 2차원 배열
 let gameboard; //시각적으로 보여지는 게임판
 
+function description(element){
+    document.querySelectorAll('.description').forEach(item => {
+        item.style.display = "none"
+        });
+    document.querySelector("#" + element.dataset.mode).style.display = "inline";
+}
+
 function gameStart(){
     if(restart){
+        document.querySelector('#time').style.display = "none";
+        clearInterval(timer);
         gameboard.remove();
     }
     gameboard = document.createElement('table');
-    clearInterval(timer);
+    document.querySelector("#gamebtn").innerHTML = "재시작";
+
 
     // 난이도별 가중치 지정정
     weight = parseInt(document.querySelector('input[name="mode"]:checked').value);
@@ -42,15 +53,16 @@ function gameStart(){
     gameboard.appendChild(fragment);
     document.body.appendChild(gameboard);
     score = 0;
+    document.querySelector('#score').innerHTML = score;
 
     if(level == "hard") gameboard_array[2][2] = "X";
 
     randomXY();
     randomXY();
 
-    // gameboard_array =  [[8,4,2,4],
+    // gameboard_array =  [[2048,4,2,4],
     //                     [4,16,8,2],
-    //                     [16,2,4,8],
+    //                     [16,1024,512,8],
     //                     [32,64,128,2]]; //test 코드임
  
     update();
@@ -59,8 +71,9 @@ function gameStart(){
     gameover = false;
 
     if(level == "challenge"){
-        time = 5;
+        time = 120;
         let displayTime = document.querySelector('#time');
+        displayTime.style.display = "inline";
         displayTime.innerHTML = "남은 시간 : " + time + "초";
         timer = setInterval(() => {
             time --;
@@ -100,9 +113,10 @@ function randomXY() {
 }
 
 function randomNumber(){
-    let rand = parseInt(Math.random*10);
-    if(rand == 0 && weight == 3) return 8;
-    if(rand == 0) return 4;
+    let rand = parseInt(Math.random()*10);
+    if(rand == 0 && level == "hard") return 8;
+    else if(rand >= 1 && rand <=4 && level == "hard") return 4;
+    else if(rand == 0) return 4;
     else return 2;
 }
 
@@ -177,6 +191,7 @@ function up(){
                         score += Math.abs(gameboard_array[temp][j]);
                         isMoved = true;
                         isSummed = true;
+                        animation(document.getElementById(temp*weight + j), created=true);
                     }
                     else{
                         gameboard_array[temp+1][j] = gameboard_array[i][j];
@@ -217,6 +232,7 @@ function down(){
                         score += Math.abs(gameboard_array[temp][j]);
                         isMoved = true;
                         isSummed = true;
+                        animation(document.getElementById(temp*weight + j), created=true);
                     }
                     else{
                         gameboard_array[temp-1][j] = gameboard_array[i][j];
@@ -257,6 +273,7 @@ function left(){
                         score += Math.abs(gameboard_array[i][temp]);
                         isMoved = true;
                         isSummed = true;
+                        animation(document.getElementById(i*weight + temp), created=true);
                     }
                     else{
                         gameboard_array[i][temp+1] = gameboard_array[i][j];
@@ -297,6 +314,7 @@ function right(){
                         score += Math.abs(gameboard_array[i][temp]);
                         isMoved = true;
                         isSummed = true;
+                        animation(document.getElementById(i*weight + temp), created=true);
                     }
                     else{
                         gameboard_array[i][temp-1] = gameboard_array[i][j];
@@ -316,11 +334,11 @@ function checkMove(isMoved, isSummed){
             for(var i = 0; i<weight; i++){
                 for(var j = 0; j<weight; j++){
                     if(gameboard_array[i][j] < 0) gameboard_array[i][j] =  Math.abs(gameboard_array[i][j]);
-                    animation
                 }
             }
         }
         randomXY();
+        if(level == "hard") randomXY();
         update();
     }
     else{
@@ -360,6 +378,10 @@ function gameOver(){
     const max = getMax();
     time = 0;
     alert("[ 게임 오버 ]\n당신의 점수는 " + score + "이고, 가장 큰 숫자는 " + max + "입니다.");
+    if(best_score<score){
+        document.querySelector("#bestScore").innerHTML = score;
+        best_score = score;
+    }
 
 }
 
@@ -380,19 +402,21 @@ function getMax(){
 // 애니메이션 주기
 async function animation(cell, created){
     if (created) {
-        console.log("애니메");
         cell.animate(
             {
                 transform: [
-                    'scale(0.5)', // 시작 값
-                    'scale(1)' // 종료 값
+                    'scale(0.5)', 
+                    'scale(1)' 
                 ]
             },
             {
-                duration: 200, // 밀리초 지정
-                fill: 'forwards', // 종료 시 속성을 지님
-                easing: 'ease' // 가속도 종류
+                duration: 300, 
+                fill: 'forwards', 
+                easing: 'ease' 
             }
         );
+    }
+    else{
+
     }
 }

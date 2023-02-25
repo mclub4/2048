@@ -1,9 +1,38 @@
-button{
+html{
+    font-family: Arial;
+}
+
+#gamebtn{
     font-size : 30pt;
+    box-sizing: content-box;
+    background-color: #7a6652;
+    outline: none;
+    border: none;
+    border-radius: 3px;
+    width: 120px;
+    height: 30px;
+    padding: 5px;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #fff;
+    line-height: 30px;
 }
 
 h1{
-    color:red;
+    display: inline;
+    color: #6b635b;
+    font-size: 60pt;
+    line-height: 10pt;
+    letter-spacing: 2px;
+}
+
+.scoreBar{
+    border : 0px;
+    display: inline-block;
+    text-align: center;
+    margin-top: 5px;
+    margin-left: 60px;
+    background-color: #b9b0a7;
 }
 
 table, tr, td{
@@ -18,13 +47,17 @@ table{
 .cell{
     border : 2px solid black;
     border-radius: 6px;
-    width : 150px;
-    height : 150px;
+    width : 120px;
+    height : 120px;
     font-size : 14pt;
     font-weight: bold;
     text-align: center;
     margin : 10px;
     border-collapse: separate;
+}
+
+body{
+    background-color : #f9ead1;
 }
 
 .cell[data-number="0"]{
@@ -41,8 +74,34 @@ table{
 .cell[data-number="8"]{
     background-color: #fac38c;
 }
+.cell[data-number="16"]{
+    background-color: #fab065;
+}
+.cell[data-number="32"]{
+    background-color: #fa9c3d;
+}
+.cell[data-number="64"]{
+    background-color: #f18518;
+}
+.cell[data-number="128"]{
+    background-color: #ca6a0a;
+}
+.cell[data-number="256"]{
+    background-color: #edc53f;
+}
+.cell[data-number="512"]{
+    background-color: #f8c51c;
+}
+.cell[data-number="1024"]{
+    background-color: #f55c2e;
+}
+.cell[data-number="2048"]{
+    background-color: #fd3f05;
+}
 .cell[data-number="X"]{
     border : 10px solid black;
     background-color: #f71313;
     color:white;
+    width : 100px;
+    height : 100px;
 }
