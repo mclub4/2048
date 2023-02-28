@@ -52,6 +52,7 @@ table{
     font-size : 14pt;
     font-weight: bold;
     text-align: center;
+    vertical-align: middle;
     margin : 10px;
     border-collapse: separate;
 }

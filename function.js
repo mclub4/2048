@@ -91,15 +91,27 @@ function update(){
     for(var i = 0; i<weight; i++){
         for(var j = 0; j<weight; j++){
             let box = document.getElementById(i*weight +j); //id의 첫번째 철자가 숫자면 이스케이프 문자 추가해줘야됨 
-            box.innerHTML = gameboard_array[i][j];
+            box.innerHTML = gameboard_array[i][j] != 0 ? gameboard_array[i][j] : "";
             box.dataset.number = gameboard_array[i][j].toString();
         }
     }
     document.querySelector('#score').innerHTML = score;
 }
 
+// 변경사항 게임판에 반영
+function updatePart(position){
+    let beforeCell = document.getElementById(position.beforeCol*4 + position.beforeRow); 
+    beforeCell.innerHTML = gameboard_array[position.beforeCol][position.beforeRow] != 0 ? gameboard_array[position.beforeCol][position.beforeRow] : "";
+    beforeCell.dataset.number = gameboard_array[position.beforeCol][position.beforeRow].toString();
+    let afterCell = document.getElementById(position.afterCol*4 + position.afterRow); 
+    afterCell.innerHTML = gameboard_array[position.afterCol][position.afterRow] != 0 ? gameboard_array[position.afterCol][position.afterRow] : "";
+    afterCell.dataset.number = gameboard_array[position.afterCol][position.afterRow].toString();
+    document.querySelector('#score').innerHTML = score;
+}
+
 //랜덤 좌표 및 숫자 생성
 function randomXY() {
+    let count = 0;
     while(true){
         let rand = parseInt(Math.random() * (weight*weight));
         let x = parseInt(rand / weight);
@@ -109,6 +121,8 @@ function randomXY() {
             animation(document.getElementById(x*weight + y), created=true);
             return;
         }
+        count ++;
+        if(count >= 100) return;
     }
 }
 
@@ -174,15 +188,50 @@ function up(){
                 if(gameboard_array[temp][j] == 0){
                     // 사이에 다 빈칸이면 끝까지 땡김
                     gameboard_array[temp][j] = gameboard_array[i][j];
-                    gameboard_array[i][j]=0;
                     isMoved = true;
+                    var position = {
+                        x : document.getElementById(temp*weight + j).getBoundingClientRect().x - document.getElementById(i*weight + j).getBoundingClientRect().x,
+                        y : document.getElementById(temp*weight + j).getBoundingClientRect().y - document.getElementById(i*weight + j).getBoundingClientRect().y,
+                        beforeCol : i,
+                        beforeRow : j,
+                        afterCol : i,
+                        afterRow : j
+                    };
+                    let tempCell = document.createElement('td');
+                    tempCell.className = "cell";
+                    tempCell.dataset.number = gameboard_array[i][j].toString();
+                    tempCell.style.position = "absolute";
+                    tempCell.style.zIndex = "2";
+                    tempCell.style.left = (document.getElementById(i*weight + j).getBoundingClientRect().x - 10) + "px";
+                    tempCell.style.top = (document.getElementById(i*weight + j).getBoundingClientRect().y - 10) + "px";
+                    tempCell.innerHTML = gameboard_array[i][j].toString();
+                    gameboard.appendChild(tempCell);
+                    gameboard_array[i][j]=0;
+                    animation(tempCell, created=false, position).then(()=>{
+                        update();});
                 }
                 else if(gameboard_array[temp][j] != gameboard_array[i][j]){
                     // 다른 숫자에 걸리면 앞에 둠
                     if(temp + 1 == i) continue;
                     gameboard_array[temp+1][j] = gameboard_array[i][j];
                     gameboard_array[i][j] = 0;
-                    isMoved = true;                }
+                    isMoved = true;
+                    var position = {
+                        x : document.getElementById((temp+1)*weight + j).getBoundingClientRect().x - document.getElementById(i*weight + j).getBoundingClientRect().x,
+                        y : document.getElementById((temp+1)*weight + j).getBoundingClientRect().y - document.getElementById(i*weight + j).getBoundingClientRect().y
+                    };
+                    let tempCell = document.createElement('td');
+                    tempCell.className = "cell";
+                    tempCell.dataset.number = gameboard_array[i][j].toString();
+                    tempCell.style.position = "absolute";
+                    tempCell.style.zIndex = "2";
+                    tempCell.style.left = (document.getElementById(i*weight + j).getBoundingClientRect().x - 10) + "px";
+                    tempCell.style.top = (document.getElementById(i*weight + j).getBoundingClientRect().y - 10) + "px";
+                    tempCell.innerHTML = gameboard_array[i][j].toString();
+                    gameboard.appendChild(tempCell);
+                    animation(tempCell, created=false, position);
+                    gameboard_array[i][j]=0;                
+                }
                 else{
                     // 같은 숫자에 걸리면 합칠 수 있는지 여부 확인
                     if(gameboard_array[temp][j] > 0){
@@ -259,6 +308,7 @@ function left(){
                     gameboard_array[i][temp] = gameboard_array[i][j];
                     gameboard_array[i][j]=0;
                     isMoved = true;
+                    
                 }
                 else if(gameboard_array[i][temp] != gameboard_array[i][j]){
                     if(temp + 1 == j) continue;
@@ -339,7 +389,7 @@ function checkMove(isMoved, isSummed){
         }
         randomXY();
         if(level == "hard") randomXY();
-        update();
+        // update();
     }
     else{
         if(!checkGameOver()) randomXY();
@@ -400,7 +450,7 @@ function getMax(){
 
 
 // 애니메이션 주기
-async function animation(cell, created){
+async function animation(cell, created, position){
     if (created) {
         cell.animate(
             {
@@ -417,6 +467,25 @@ async function animation(cell, created){
         );
     }
     else{
-
+        await new Promise(resolve => {
+            cell.animate(
+                {
+                  transform: [
+                    'translate(' + position.x + 'px, ' + position.y  + 'px)'
+                  ], 
+                },
+                {
+                  duration: 200, 
+                  fill: 'forwards', 
+                  easing: 'linear' 
+                }
+            );
+            setTimeout(() => {
+                resolve();
+            }, 200);
+        }) 
+        cell.remove();
+        updatePart(position);
     }
 }
+
