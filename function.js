@@ -100,6 +100,7 @@ function update(){
 
 //랜덤 좌표 및 숫자 생성
 function randomXY() {
+    let count = 0;
     while(true){
         let rand = parseInt(Math.random() * (weight*weight));
         let x = parseInt(rand / weight);
@@ -110,6 +111,8 @@ function randomXY() {
             return;
         }
     }
+    count ++;
+    if(count >= 100) return;
 }
 
 function randomNumber(){
